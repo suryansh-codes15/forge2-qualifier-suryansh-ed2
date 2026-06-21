@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { api } from "./api";
 
 const TAG_COLORS = ["#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#3498db", "#9b59b6"];
 
@@ -6,24 +7,64 @@ export default function CardModal({ card, members, allTags, onClose, onUpdate, o
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || "");
   const [dueDate, setDueDate] = useState(card.due_date ? card.due_date.slice(0, 10) : "");
+  const [activities, setActivities] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [commenterId, setCommenterId] = useState("");
 
   const cardTagIds = new Set((card.tags || []).map((t) => t.id));
   const cardMemberIds = new Set((card.members || []).map((m) => m.id));
+
+  const loadActivities = useCallback(async () => {
+    try {
+      const data = await api.getActivities(card.id);
+      setActivities(data);
+    } catch (e) {
+      console.error("Failed to load activities", e);
+    }
+  }, [card.id]);
+
+  useEffect(() => {
+    loadActivities();
+  }, [loadActivities, card.members, card.tags, card.title, card.description, card.due_date]);
+
+  useEffect(() => {
+    if (members.length > 0 && !commenterId) {
+      setCommenterId(members[0].id.toString());
+    }
+  }, [members, commenterId]);
 
   function save() {
     onUpdate(card.id, { title, description, due_date: dueDate || null });
   }
 
+  async function handleAddComment(e) {
+    e.preventDefault();
+    if (!commenterId || !newComment.trim()) return;
+    try {
+      await api.postComment(card.id, Number(commenterId), newComment.trim());
+      setNewComment("");
+      loadActivities();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding comment: " + err.message);
+    }
+  }
+
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" style={{ width: "500px", maxHeight: "90vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>&times;</button>
 
         <label className="field-label">Title</label>
         <input value={title} onChange={(e) => setTitle(e.target.value)} onBlur={save} />
 
         <label className="field-label">Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} onBlur={save} rows={4} />
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} onBlur={save} rows={3} />
 
         <label className="field-label">Due date</label>
         <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} onBlur={save} />
@@ -59,6 +100,59 @@ export default function CardModal({ card, members, allTags, onClose, onUpdate, o
               </button>
             );
           })}
+        </div>
+
+        <div className="modal-divider" />
+
+        <label className="field-label" style={{ marginTop: "5px" }}>Activity & Comments</label>
+        
+        <form onSubmit={handleAddComment} className="comment-form">
+          <div className="comment-form-row">
+            <select value={commenterId} onChange={(e) => setCommenterId(e.target.value)}>
+              <option value="" disabled>Select member...</option>
+              {members.map((m) => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
+            </select>
+            <input
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              style={{ marginTop: 0 }}
+            />
+          </div>
+          <button type="submit" className="comment-submit-btn" disabled={!newComment.trim() || !commenterId}>
+            Comment
+          </button>
+        </form>
+
+        <div className="activities-section">
+          {activities.length === 0 ? (
+            <div style={{ fontSize: "11px", color: "#666", fontStyle: "italic", textAlign: "center", padding: "10px" }}>
+              No comments or activity yet.
+            </div>
+          ) : (
+            activities.map((act) => {
+              const isComment = act.type === "comment";
+              return (
+                <div key={act.id} className={`activity-item type-${act.type}`}>
+                  {isComment ? (
+                    <>
+                      <div className="comment-meta">
+                        <span className="comment-author">{act.member ? act.member.name : "Unknown Member"}</span>
+                        <span className="comment-time">{formatTime(act.created_at)}</span>
+                      </div>
+                      <div className="comment-text">{act.content}</div>
+                    </>
+                  ) : (
+                    <span>
+                      <strong>{act.member ? act.member.name : "System"}</strong> {act.content} <span style={{ color: "#555", fontSize: "10px", marginLeft: "6px" }}>{formatTime(act.created_at)}</span>
+                    </span>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
 
         <button className="danger-btn" onClick={() => { onDelete(card.id); onClose(); }}>

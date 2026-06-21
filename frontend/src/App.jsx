@@ -192,7 +192,7 @@ export default function App() {
 
       {openCard && (
         <CardModal
-          card={openCard}
+          card={activeBoard?.lists.flatMap((l) => l.cards).find((c) => c.id === openCard.id) || openCard}
           members={members}
           allTags={tags}
           onClose={() => setOpenCard(null)}

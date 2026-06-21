@@ -47,4 +47,9 @@ export const api = {
     request(`/cards/${cardId}/members`, { method: "POST", body: JSON.stringify({ member_id: memberId }) }),
   unassignMember: (cardId, memberId) =>
     request(`/cards/${cardId}/members/${memberId}`, { method: "DELETE" }),
+
+  // Comments & Activities
+  getActivities: (cardId) => request(`/cards/${cardId}/activities`),
+  postComment: (cardId, memberId, content) =>
+    request(`/cards/${cardId}/comments`, { method: "POST", body: JSON.stringify({ member_id: memberId, content }) }),
 };
