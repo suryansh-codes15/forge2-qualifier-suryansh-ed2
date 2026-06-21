@@ -1,10 +1,11 @@
 {
   "plugins": {
-    "entries": {
-      "slack": {
-        "enabled": true
-      }
-    }
+    "allow": [
+      "slack",
+      "file-transfer",
+      "memory-core"
+    ],
+    "bundledDiscovery": "compat"
   },
   "meta": {
     "lastTouchedVersion": "2026.6.9",
@@ -31,12 +32,17 @@
       "model": "google/gemini-2.5-flash",
       "memorySearch": {
         "enabled": false
+      },
+      "compaction": {
+        "reserveTokens": 2048,
+        "reserveTokensFloor": 2048
       }
     }
   },
   "models": {
     "providers": {
       "google": {
+        "api": "openai-completions",
         "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai/",
         "apiKey": {
           "source": "env",
@@ -51,6 +57,7 @@
         ]
       },
       "groq": {
+        "api": "openai-completions",
         "baseUrl": "https://api.groq.com/openai/v1",
         "apiKey": {
           "source": "env",
@@ -61,7 +68,10 @@
           {
             "id": "llama-3.3-70b-versatile",
             "name": "Llama 3.3 70B Versatile",
-            "maxTokens": 8192
+            "api": "openai-completions",
+            "maxTokens": 8192,
+            "contextWindow": 12000,
+            "contextTokens": 12000
           }
         ]
       }

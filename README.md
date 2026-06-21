@@ -2,6 +2,13 @@
 
 A tiny Trello-style Kanban board built during the Forge 2 online qualifier using a cooperative two-agent system: Hermes as the brain and OpenClaw as the hands, wired through Slack.
 
+### 🌐 Live Deployment
+*   **Frontend (Vercel):** [https://nmg-kanban-board.vercel.app](https://nmg-kanban-board.vercel.app)
+*   **Backend API (Localtunnel):** [https://slick-horses-accept.loca.lt](https://slick-horses-accept.loca.lt)
+
+---
+
+
 ## Features
 
 - Boards, lists, and cards with create flows for each level.
@@ -14,7 +21,7 @@ A tiny Trello-style Kanban board built during the Forge 2 online qualifier using
 ## Agent System & Model Routing
 
 - Orchestrator: Hermes Agent powered by Google Gemini 2.5 Flash through the direct Google AI Studio API for planning, memory retention, and workflow orchestration.
-- Coder: OpenClaw powered by Groq `llama-3.3-70b-versatile` for code editing and local execution.
+- Coder: OpenClaw powered by Google Gemini 2.5 Flash (via OpenAI compatibility) to handle large tool schema loads and bypass Groq free-tier TPM rate limits.
 - Communication: Slack socket mode channels for planning, coding tasks, and audit trails.
 
 ## Project Structure

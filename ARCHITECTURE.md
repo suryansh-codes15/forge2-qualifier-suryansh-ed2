@@ -52,5 +52,5 @@ Everything is wired to a private Slack workspace (`NMG Slack`):
 
 | Layer | Provider | Model | Rationale |
 | :--- | :--- | :--- | :--- |
-| **Planning & Cron** | Google AI Studio | `gemini-2.5-flash` | Outstanding context length, zero-latency parsing, and generous free limits for planning loops. |
-| **Coding & Terminal** | Google Gemini (OpenAI compat) | `gemini-2.5-flash` | Generous context length and robust JSON/tool schemas to ensure reliable file operations and coding loops. |
+| **Planning & Cron** | Google | `gemini-2.5-flash` | Direct Google AI Studio API for planning, memory, and automated workflows. |
+| **Coding & Terminal** | Google (OpenAI compat) | `gemini-2.5-flash` | Selected as default model to handle large tool schema loads and bypass Groq's 12k TPM free-tier rate limits. |
