@@ -4,7 +4,7 @@ A tiny Trello-style Kanban board built during the Forge 2 online qualifier using
 
 ### 🌐 Live Deployment
 *   **Frontend (Vercel):** [https://nmg-kanban-board.vercel.app](https://nmg-kanban-board.vercel.app)
-*   **Backend API (Localtunnel):** [https://slick-horses-accept.loca.lt](https://slick-horses-accept.loca.lt)
+*   **Backend API (Localtunnel):** [https://nmg-forge-suryansh-v2.loca.lt](https://nmg-forge-suryansh-v2.loca.lt)
 
 ---
 
