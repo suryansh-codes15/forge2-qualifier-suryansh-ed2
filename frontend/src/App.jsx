@@ -29,6 +29,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [newListName, setNewListName] = useState("");
   const [newCardTitle, setNewCardTitle] = useState({});
+  const [draggedOverListId, setDraggedOverListId] = useState(null);
 
   const loadBoard = useCallback(async (boardId) => {
     try {
@@ -77,8 +78,48 @@ export default function App() {
   }
 
   async function moveCard(cardId, toListId) {
-    await api.moveCard(cardId, toListId);
-    loadBoard(activeBoard.id);
+    if (!activeBoard) return;
+
+    // Save current activeBoard state for rollback in case of error
+    const rollbackBoard = { ...activeBoard };
+
+    // Find the card and move it optimistically
+    let movedCard = null;
+    const updatedLists = activeBoard.lists.map((list) => {
+      // Remove from source list if it exists
+      const filteredCards = list.cards.filter((card) => {
+        if (card.id === cardId) {
+          movedCard = card;
+          return false;
+        }
+        return true;
+      });
+      return { ...list, cards: filteredCards };
+    });
+
+    if (movedCard) {
+      // Insert into target list
+      const finalLists = updatedLists.map((list) => {
+        if (list.id === toListId) {
+          return { ...list, cards: [...list.cards, { ...movedCard, list_id: toListId }] };
+        }
+        return list;
+      });
+
+      // Optimistically set activeBoard state
+      setActiveBoard({ ...activeBoard, lists: finalLists });
+    }
+
+    try {
+      await api.moveCard(cardId, toListId);
+      // Quietly reload the latest board details to sync with any database defaults
+      const freshBoard = await api.getBoard(activeBoard.id);
+      setActiveBoard(freshBoard);
+    } catch (e) {
+      setError("Failed to move card: " + e.message);
+      // Rollback to original state
+      setActiveBoard(rollbackBoard);
+    }
   }
 
   async function updateCard(cardId, data) {
@@ -177,9 +218,22 @@ export default function App() {
             {activeBoard.lists.map((list) => (
               <section
                 key={list.id}
-                className="list"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => onDrop(e, list.id)}
+                className={`list ${draggedOverListId === list.id ? "dragged-over" : ""}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (draggedOverListId !== list.id) {
+                    setDraggedOverListId(list.id);
+                  }
+                }}
+                onDragLeave={() => {
+                  if (draggedOverListId === list.id) {
+                    setDraggedOverListId(null);
+                  }
+                }}
+                onDrop={(e) => {
+                  setDraggedOverListId(null);
+                  onDrop(e, list.id);
+                }}
               >
                 <div className="list-header">
                   <h2>{list.name}</h2>
