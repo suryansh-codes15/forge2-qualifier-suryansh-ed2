@@ -59,6 +59,10 @@ if (!file_exists($viewsPath)) {
 putenv("VIEW_COMPILED_PATH=" . $viewsPath);
 $_ENV['VIEW_COMPILED_PATH'] = $viewsPath;
 
+// Override script name and php self to prevent Laravel from stripping the /api prefix
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
+
 
 // Check if a configuration cache file was generated during compile time
 $configCachePath = __DIR__ . '/../bootstrap/cache/config.php';
