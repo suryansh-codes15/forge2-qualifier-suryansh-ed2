@@ -60,6 +60,14 @@ putenv("VIEW_COMPILED_PATH=" . $viewsPath);
 $_ENV['VIEW_COMPILED_PATH'] = $viewsPath;
 
 
+// Check if a configuration cache file was generated during compile time
+$configCachePath = __DIR__ . '/../bootstrap/cache/config.php';
+if (file_exists($configCachePath)) {
+    throw new \Exception("Vercel compile-time config cache found at: " . realpath($configCachePath) . "\n\n" . 
+        substr(file_get_contents($configCachePath), 0, 2000)
+    );
+}
+
 // Load the standard bootstrap entrypoint with error catching
 try {
     require __DIR__ . '/../public/index.php';
