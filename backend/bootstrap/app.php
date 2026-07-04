@@ -15,5 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Throwable $e) {
+            header('HTTP/1.1 500 Internal Server Error');
+            header('Content-Type: text/plain');
+            echo "Laravel Caught Exception: " . $e->getMessage() . "\n";
+            echo "File: " . $e->getFile() . " (Line " . $e->getLine() . ")\n";
+            echo "Trace:\n" . $e->getTraceAsString() . "\n";
+            exit(1);
+        });
     })->create();

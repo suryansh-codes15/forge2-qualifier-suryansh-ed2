@@ -19,7 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        throw new \Exception("DEBUG: AppServiceProvider boot called!");
         // Dynamically point SQLite database to writeable /tmp on Vercel (Linux serverless)
         if (file_exists('/tmp') && is_dir('/tmp') && is_writable('/tmp')) {
             config(['database.connections.sqlite.database' => '/tmp/database.sqlite']);
