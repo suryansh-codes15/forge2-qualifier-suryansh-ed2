@@ -30,10 +30,13 @@ putenv("DB_CONNECTION=sqlite");
 putenv("DB_DATABASE=" . $dbPath);
 $_ENV['DB_CONNECTION'] = 'sqlite';
 $_ENV['DB_DATABASE'] = $dbPath;
+$_SERVER['DB_CONNECTION'] = 'sqlite';
+$_SERVER['DB_DATABASE'] = $dbPath;
 
 // Configure Laravel to write logs to stderr instead of the read-only storage directory
 putenv("LOG_CHANNEL=stderr");
 $_ENV['LOG_CHANNEL'] = 'stderr';
+$_SERVER['LOG_CHANNEL'] = 'stderr';
 
 // Configure Laravel to write compiled views to a writeable directory in /tmp
 $viewsPath = '/tmp/views';
