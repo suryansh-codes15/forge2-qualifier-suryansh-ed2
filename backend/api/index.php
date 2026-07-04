@@ -28,5 +28,14 @@ if (!file_exists($viewsPath)) {
 putenv("VIEW_COMPILED_PATH=" . $viewsPath);
 $_ENV['VIEW_COMPILED_PATH'] = $viewsPath;
 
-// Load the standard bootstrap entrypoint
-require __DIR__ . '/../public/index.php';
+// Load the standard bootstrap entrypoint with error catching
+try {
+    require __DIR__ . '/../public/index.php';
+} catch (\Throwable $e) {
+    header('HTTP/1.1 500 Internal Server Error');
+    header('Content-Type: text/plain');
+    echo "Bootstrap Error: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . " (Line " . $e->getLine() . ")\n";
+    echo "Trace:\n" . $e->getTraceAsString() . "\n";
+    exit(1);
+}
