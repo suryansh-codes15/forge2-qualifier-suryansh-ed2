@@ -278,6 +278,7 @@ export default function App() {
                           </div>
                         )}
                       </div>
+                      <button className="delete-button" onClick={(e) => { e.stopPropagation(); deleteCard(card.id); }}>Delete</button>
                     </article>
                   ))}
                 </div>
