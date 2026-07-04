@@ -33,6 +33,19 @@ $_ENV['DB_DATABASE'] = $dbPath;
 $_SERVER['DB_CONNECTION'] = 'sqlite';
 $_SERVER['DB_DATABASE'] = $dbPath;
 
+// Force Laravel to bypass configuration, routing, and event caches at runtime
+putenv("APP_CONFIG_CACHE=/tmp/non_existent_config.php");
+$_ENV['APP_CONFIG_CACHE'] = '/tmp/non_existent_config.php';
+$_SERVER['APP_CONFIG_CACHE'] = '/tmp/non_existent_config.php';
+
+putenv("APP_ROUTES_CACHE=/tmp/non_existent_routes.php");
+$_ENV['APP_ROUTES_CACHE'] = '/tmp/non_existent_routes.php';
+$_SERVER['APP_ROUTES_CACHE'] = '/tmp/non_existent_routes.php';
+
+putenv("APP_EVENTS_CACHE=/tmp/non_existent_events.php");
+$_ENV['APP_EVENTS_CACHE'] = '/tmp/non_existent_events.php';
+$_SERVER['APP_EVENTS_CACHE'] = '/tmp/non_existent_events.php';
+
 // Configure Laravel to write logs to stderr instead of the read-only storage directory
 putenv("LOG_CHANNEL=stderr");
 $_ENV['LOG_CHANNEL'] = 'stderr';
