@@ -19,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Dynamically point SQLite database to writeable /tmp in production (Vercel)
-        if (config('app.env') === 'production' || env('APP_ENV') === 'production' || getenv('APP_ENV') === 'production') {
+        // Dynamically point SQLite database to writeable /tmp on Vercel (Linux serverless)
+        if (file_exists('/tmp') && is_dir('/tmp') && is_writable('/tmp')) {
             config(['database.connections.sqlite.database' => '/tmp/database.sqlite']);
         }
     }
