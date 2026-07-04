@@ -59,15 +59,6 @@ if (!file_exists($viewsPath)) {
 putenv("VIEW_COMPILED_PATH=" . $viewsPath);
 $_ENV['VIEW_COMPILED_PATH'] = $viewsPath;
 
-// Debug point to inspect filesystem and env variables
-throw new \Exception("DEBUG INFO: " .
-    "dbSource=" . $dbSource . " (" . (file_exists($dbSource) ? 'exists' : 'missing') . ") | " .
-    "dbPath=" . $dbPath . " (" . (file_exists($dbPath) ? 'exists' : 'missing') . ") | " .
-    "tmp_exists=" . (file_exists('/tmp') ? 'yes' : 'no') . " | " .
-    "tmp_dir=" . (is_dir('/tmp') ? 'yes' : 'no') . " | " .
-    "tmp_write=" . (is_writable('/tmp') ? 'yes' : 'no') . " | " .
-    "APP_ENV=" . (getenv('APP_ENV') ?: 'unset')
-);
 
 // Load the standard bootstrap entrypoint with error catching
 try {
