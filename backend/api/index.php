@@ -66,8 +66,7 @@ throw new \Exception("DEBUG INFO: " .
     "tmp_exists=" . (file_exists('/tmp') ? 'yes' : 'no') . " | " .
     "tmp_dir=" . (is_dir('/tmp') ? 'yes' : 'no') . " | " .
     "tmp_write=" . (is_writable('/tmp') ? 'yes' : 'no') . " | " .
-    "APP_ENV=" . (getenv('APP_ENV') ?: 'unset') . " | " .
-    "CONFIG_DB=" . (config('database.connections.sqlite.database') ?: 'unset')
+    "APP_ENV=" . (getenv('APP_ENV') ?: 'unset')
 );
 
 // Load the standard bootstrap entrypoint with error catching
